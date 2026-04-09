@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Grants Management — Competitive Strategy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --cbg: #ffffff;
+      --cbs: #f1f5f9;
+      --cts: #475569;
+      --ctt: #94a3b8;
+      --cti: #0369a1;
+      --cb: #e2e8f0;
+      --cbd: #e2e8f0;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "DM Sans", system-ui, sans-serif;
+      font-size: 16px;
+      color: #0f172a;
+      background: #f8fafc;
+      -webkit-font-smoothing: antialiased;
+      padding: 0 1rem 2rem;
+    }
+    #app { max-width: 960px; margin: 0 auto; padding-top: 1rem; }
+    .tab-nav {
+      display: flex; gap: 4px; background: var(--cbs); padding: 6px; border-radius: 8px;
+      margin-bottom: 1rem; flex-wrap: wrap;
+    }
+    .tab-btn {
+      padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 400;
+      cursor: pointer; border: none; background: transparent; color: var(--cts);
+      font-family: inherit;
+    }
+    .tab-btn.active { background: #e8f4fc; color: var(--cti); font-weight: 500; }
+    .card { background: var(--cbg); border: 0.5px solid var(--cbd); border-radius: 8px; }
+    .card.pad { padding: 16px 18px; margin-bottom: 16px; }
+    .lbl { font-size: 11px; color: var(--ctt); text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 14px; }
+    .sec { font-size: 13px; font-weight: 500; margin: 0 0 10px; }
+    .mt { font-size: 10px; color: var(--ctt); text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 6px; }
+    .tbl { width: 100%; border-collapse: collapse; font-size: 11px; }
+    code { font-size: 10px; background: var(--cbs); padding: 2px 6px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+const GOVSPEND = [
+  // AmpliFund / Euna — 39 POs, last 12 months
+  { vendor: "AmpliFund / Euna", agency: "Polk County Fire Rescue", state: "FL", type: "Fire", amount: 191000, date: "2026-02", cat: "impl", desc: "AmpliFund grant lifecycle implementation (265 hrs)" },
+  { vendor: "AmpliFund / Euna", agency: "Polk County Fire Rescue", state: "FL", type: "Fire", amount: 191000, date: "2025-12", cat: "impl", desc: "AmpliFund grant lifecycle implementation (Contract 25-1001)" },
+  { vendor: "AmpliFund / Euna", agency: "CA Dept of Forestry & Fire", state: "CA", type: "State", amount: 185658, date: "2025-11", cat: "sub", desc: "Euna Grants Software renewal 01/09/2026–01/08/2027" },
+  { vendor: "AmpliFund / Euna", agency: "City of Greeley", state: "CO", type: "Municipality", amount: 117584, date: "2025-12", cat: "sub", desc: "Euna Budget and Euna Grants Module" },
+  { vendor: "AmpliFund / Euna", agency: "County of San Joaquin", state: "CA", type: "County", amount: 111240, date: "2025-10", cat: "sub", desc: "Grant management and prospecting" },
+  { vendor: "AmpliFund / Euna", agency: "City of Newport", state: "RI", type: "Municipality", amount: 19500, date: "2026-04", cat: "impl", desc: "AmpliFund/EUNA Grant Management Implementation" },
+  { vendor: "AmpliFund / Euna", agency: "City of Temple", state: "TX", type: "Municipality", amount: 25000, date: "2026-01", cat: "sub", desc: "AmpliFund Grant Management Software FY26" },
+  { vendor: "AmpliFund / Euna", agency: "California State Library", state: "CA", type: "State", amount: 43950, date: "2026-01", cat: "sub", desc: "AmpliFund Enterprise Public Sector 1yr" },
+  { vendor: "AmpliFund / Euna", agency: "County of Fairfax", state: "VA", type: "County", amount: 63880, date: "2025-12", cat: "sub", desc: "CY2026 Euna Grants / AmpliFund" },
+  { vendor: "AmpliFund / Euna", agency: "Central Community College", state: "NE", type: "Higher Ed", amount: 1500, date: "2025-12", cat: "addon", desc: "AmpliFund SSO add-on" },
+  { vendor: "AmpliFund / Euna", agency: "San Antonio ISD", state: "TX", type: "K-12", amount: 5650, date: "2025-12", cat: "sub", desc: "AmpliFund Subscription Renewal 7/1/25–1/1/26 (6 months)" },
+  { vendor: "AmpliFund / Euna", agency: "County of Grant", state: "NM", type: "County", amount: 20000, date: "2025-11", cat: "sub", desc: "Amplifund Grants Management" },
+  { vendor: "AmpliFund / Euna", agency: "County of Leon", state: "FL", type: "County", amount: 27500, date: "2025-11", cat: "sub", desc: "AmpliFund Grants Management Subscription" },
+  { vendor: "AmpliFund / Euna", agency: "County of Meeker", state: "MN", type: "County", amount: 40761, date: "2025-10", cat: "sub", desc: "AmpliFund Lifecycle $10M–$40M Annual Grant Revenue" },
+  { vendor: "AmpliFund / Euna", agency: "County of Jackson", state: "MO", type: "County", amount: 65545, date: "2025-09", cat: "sub", desc: "AmpliFund grant maker" },
+  { vendor: "AmpliFund / Euna", agency: "Tazewell County Health Dept", state: "IL", type: "Other", amount: 27700, date: "2025-07", cat: "both", desc: "AmpliFund Professional Implementation & Grants Software" },
+  { vendor: "AmpliFund / Euna", agency: "Chaffey College", state: "CA", type: "Higher Ed", amount: 26250, date: "2025-05", cat: "sub", desc: "AmpliFund Grants Management Software 3/17/25–3/16/26" },
+  { vendor: "AmpliFund / Euna", agency: "City of Coral Springs", state: "FL", type: "Municipality", amount: 39402, date: "2025-04", cat: "sub", desc: "AmpliFund Grant Seeker" },
+  { vendor: "AmpliFund / Euna", agency: "Pima Community College", state: "AZ", type: "Higher Ed", amount: 90000, date: "2025-06", cat: "sub", desc: "Subscription/License AmpliFund Grant Seeker (3-yr)" },
+  { vendor: "AmpliFund / Euna", agency: "Borough of Matanuska-Susitna", state: "AK", type: "County", amount: 32500, date: "2025-07", cat: "sub", desc: "AmpliFund Grants Management Software Renewal" },
+  { vendor: "AmpliFund / Euna", agency: "County of Walton", state: "FL", type: "County", amount: 23500, date: "2025-06", cat: "sub", desc: "AmpliFund Lifecycle Management Subscription 12 months" },
+  { vendor: "AmpliFund / Euna", agency: "Medina County", state: "OH", type: "County", amount: 22500, date: "2025-11", cat: "sub", desc: "Grant Management Software Sub 2025-2026" },
+  { vendor: "AmpliFund / Euna", agency: "Central Community College", state: "NE", type: "Higher Ed", amount: 18625, date: "2025-11", cat: "both", desc: "Grant Seeker setup + impl + sub" },
+  { vendor: "AmpliFund / Euna", agency: "Cuyahoga Community College", state: "OH", type: "Higher Ed", amount: 45500, date: "2025-07", cat: "both", desc: "AmpliFund Grant Seeker Enterprise ≤$15M Impl + Yr2 Sub" },
+  { vendor: "AmpliFund / Euna", agency: "VT Agency of Digital Services", state: "VT", type: "State", amount: 111684, date: "2024-11", cat: "both", desc: "AmpliFund Implementation + Licensing SFY25" },
+  // eCivis
+  { vendor: "eCivis", agency: "County of Alachua", state: "FL", type: "County", amount: 75247, date: "2025-07", cat: "sub", desc: "eCivis Grants Network Software (Carahsoft)" },
+  { vendor: "eCivis", agency: "City of Alpharetta", state: "GA", type: "Municipality", amount: 45120, date: "2026-01", cat: "sub", desc: "ECIVIS GRANTS NETWORK SOFTWARE 10/25/2025–10/24/2026" },
+  { vendor: "eCivis", agency: "City of Riverside", state: "CA", type: "Municipality", amount: 44888, date: "2025-08", cat: "sub", desc: "eCivis grants management software Year 2 of 2" },
+  { vendor: "eCivis", agency: "County of Shawnee", state: "KS", type: "County", amount: 23814, date: "2025-09", cat: "sub", desc: "eCivis Grant Pre & Post Award" },
+  // Neighborly
+  { vendor: "Neighborly", agency: "City of Portland Housing", state: "ME", type: "Municipality", amount: 20640, date: "2025-08", cat: "sub", desc: "Annual fee for Neighborly Loan/Grant Software Licenses" },
+  { vendor: "Neighborly", agency: "CO Dept Military & Veterans", state: "CO", type: "State", amount: 17000, date: "2026-01", cat: "sub", desc: "Neighborly Software Grants Platform" },
+  { vendor: "Neighborly", agency: "CO Dept Military & Veterans", state: "CO", type: "State", amount: 17000, date: "2025-09", cat: "sub", desc: "Neighborly Grants Platform" },
+  { vendor: "Neighborly", agency: "City of Corvallis", state: "OR", type: "Municipality", amount: 8100, date: "2025-07", cat: "sub", desc: "Neighborly Grant Management Software Year 3 License" },
+  { vendor: "Neighborly", agency: "City of Commerce", state: "TX", type: "Municipality", amount: 6000, date: "2025-09", cat: "sub", desc: "Neighborly Grant Platform" },
+  { vendor: "Neighborly", agency: "County School District", state: "NC", type: "K-12", amount: 4000, date: "2025-10", cat: "sub", desc: "Neighborly Grants" },
+  // OpenGov
+  { vendor: "OpenGov", agency: "Town of Waterford", state: "CT", type: "Municipality", amount: 42937, date: "2025-10", cat: "sub", desc: "Grant Management Software" },
+  // Submittable
+  { vendor: "Submittable", agency: "City of Miami Beach", state: "FL", type: "Municipality", amount: 7150, date: "2026-02", cat: "sub", desc: "PPA Grant Management Platform" },
+  // Instrumentl
+  { vendor: "Instrumentl", agency: "LA City Housing Authority", state: "CA", type: "Other", amount: 6048, date: "2025-11", cat: "sub", desc: "Grant Management Software Professional" },
+  { vendor: "Instrumentl", agency: "City of Lakewood", state: "CO", type: "Municipality", amount: 5988, date: "2025-10", cat: "sub", desc: "Online Platform to Find, Track and Manage Grant Opportunities" },
+  // ZoomGrants
+  { vendor: "ZoomGrants", agency: "City of Stamford", state: "CT", type: "Municipality", amount: 3500, date: "2026-01", cat: "sub", desc: "Grant Management Software" },
+  { vendor: "ZoomGrants", agency: "City of Stamford", state: "CT", type: "Municipality", amount: 1500, date: "2025-10", cat: "sub", desc: "Grant Management Software" },
+];
+const COMPETITORS = [
+  {
+    name: "AmpliFund / Euna",
+    color: "#185FA5",
+    bg: "#EBF3FB",
+    marketPos: "Market leader by volume",
+    pricingModel: "Tiered by grant portfolio size: Grant Seeker / Grant Maker / Full Lifecycle",
+    subRange: "$5K–$600K/yr",
+    implRange: "$6K–$191K",
+    medianSub: 27500,
+    medianImpl: 45500,
+    pos: 39,
+    strengths: ["Largest installed base", "NASPO/Sourcewell co-op vehicles", "Strong reseller network (Carahsoft, SHI)", "Both seeker & maker roles"],
+    weaknesses: ["Variable impl cost (hourly, unpredictable)", "Year-over-year price increases documented", "Separate Azure tenant fees for enterprise", "No native platform integration"],
+    whatTheyCharge: "Mid-market cities ($30K–300K pop): $20K–$65K/yr. Enterprise state agencies: $185K–$595K/yr. Small Higher Ed: $7K–$30K/yr. Implementation: $175–$195/hr out-of-scope.",
+    tier: "Enterprise & Mid-market",
+    winCondition: "Price + platform integration + fixed implementation fee",
+  },
+  {
+    name: "eCivis",
+    color: "#B7791F",
+    bg: "#FFFBEB",
+    marketPos: "Mid-market specialist (Euna brand)",
+    pricingModel: "Annual license, sold via Carahsoft/resellers",
+    subRange: "$24K–$75K/yr",
+    implRange: "Not visible in data",
+    medianSub: 45120,
+    medianImpl: null,
+    pos: 4,
+    strengths: ["Strong pre-award / opportunity discovery", "Carahsoft reseller access", "Euna suite positioning"],
+    weaknesses: ["Small recent footprint in GovSpend", "No visible ERP integration story", "Gong calls describe it as 'clunky' on budget management backend"],
+    whatTheyCharge: "Municipalities & counties: $24K–$75K/yr. Primarily sold through Carahsoft procurement vehicle.",
+    tier: "Mid-market",
+    winCondition: "Better post-award workflow + ERP integration + cleaner UX",
+  },
+  {
+    name: "Neighborly",
+    color: "#0F766E",
+    bg: "#E6FAFA",
+    marketPos: "Niche: grant maker / community loan programs",
+    pricingModel: "Annual flat fee",
+    subRange: "$4K–$21K/yr",
+    implRange: "Not visible",
+    medianSub: 17000,
+    medianImpl: null,
+    pos: 7,
+    strengths: ["Focused on community grant disbursement", "Simple flat pricing", "Good for loan + grant combo programs"],
+    weaknesses: ["Not a full grants lifecycle tool", "No compliance / 2 CFR tooling", "Small deal sizes limit growth"],
+    whatTheyCharge: "State & municipal grant programs: $4K–$21K/yr flat. Not competing in the mid-market lifecycle tier.",
+    tier: "Entry / Niche",
+    winCondition: "Full lifecycle (seeker + compliance + reporting) at comparable price",
+  },
+  {
+    name: "Tyler Technologies",
+    color: "#533AB7",
+    bg: "#EEEDFE",
+    marketPos: "ERP incumbent — grants module buyer",
+    pricingModel: "Module add-on to Tyler Munis/New World ERP",
+    subRange: "Not public (module pricing)",
+    implRange: "Bundled with ERP",
+    medianSub: null,
+    medianImpl: null,
+    pos: 0,
+    strengths: ["Massive installed base", "Single vendor appeal", "Procurement already established"],
+    weaknesses: ["Grants module 'broken' per multiple Gong calls", "'Accounting-first not grants-first' design", "No dedicated grants support", "Tickets take 6+ weeks to resolve"],
+    whatTheyCharge: "Module pricing bundled with Munis/New World — not independently visible. Customers universally describe it as inadequate.",
+    tier: "Incumbent (to displace)",
+    winCondition: "Purpose-built > ERP module. Integrate with Tyler, don't replace it.",
+  },
+  {
+    name: "Submittable",
+    color: "#6B3FA0",
+    bg: "#F3EEFF",
+    marketPos: "Grant maker portal (application intake)",
+    pricingModel: "SaaS subscription, tiered",
+    subRange: "$7K–$30K/yr (gov tier)",
+    implRange: "Minimal",
+    medianSub: 7150,
+    medianImpl: null,
+    pos: 1,
+    strengths: ["Clean UX for applicant portal", "Strong in grantmaker side", "Well-known brand outside gov"],
+    weaknesses: ["Weak post-award / compliance", "Not purpose-built for 2 CFR", "No ERP integration story", "Limited to intake/review workflow"],
+    whatTheyCharge: "Public sector: ~$7K–$15K/yr. Better priced than full lifecycle tools — but only covers intake.",
+    tier: "Pre-award / Intake only",
+    winCondition: "Full lifecycle value at a comparable entry price",
+  },
+  {
+    name: "ZoomGrants / Instrumentl",
+    color: "#888780",
+    bg: "#F1F5F9",
+    marketPos: "Budget / pre-award tools",
+    pricingModel: "Low-cost SaaS",
+    subRange: "$1.5K–$6K/yr",
+    implRange: "None",
+    medianSub: 4000,
+    medianImpl: null,
+    pos: 4,
+    strengths: ["Very low price", "Pre-award grant discovery", "Easy to get started"],
+    weaknesses: ["No post-award management", "No compliance tooling", "No financial integration", "Not government-grade audit trail"],
+    whatTheyCharge: "$200–$6K/yr. Pre-award only. Not a lifecycle competitor.",
+    tier: "Pre-award only",
+    winCondition: "Not a direct competitor — frame as 'you'll also need a post-award tool'",
+  },
+];
+const CMM = [
+  {
+    level: 1, label: "Ad hoc tracking", tag: "BASIC",
+    color: "#888780", bg: "#F1F5F9",
+    bullets: ["Award data lives in spreadsheets and email; version control is informal", "Reporting is manual copy-paste; little shared visibility across finance and program teams", "Compliance deadlines and documentation are tracked inconsistently; audit trail is weak"],
+    opengov: null,
+    insight: "Most first-time buyers. The 'competitor' is Excel and yellow folders on a shared drive. Pain point is audit risk and staff turnover.",
+  },
+  {
+    level: 2, label: "Point solutions", tag: "DEVELOPING",
+    color: "#888780", bg: "#F1F5F9",
+    bullets: ["One function adopts a dedicated tool; others remain in spreadsheets", "Duplicate entry between systems; reconciliation happens at month-end", "Some standardised templates or checklists, but not enforced end-to-end"],
+    opengov: null,
+    insight: "Common state: Finance uses Tyler/Oracle for spend; grants team uses a spreadsheet or basic tool. No single source of truth.",
+  },
+  {
+    level: 3, label: "Essentials", tag: "ESSENTIALS",
+    color: "#1A6B5A", bg: "#EAF5F2",
+    bullets: ["Clear stages from opportunity → award → implementation → closeout, with ownership by role", "Integrations to ERP/budget or related systems reduce double entry for key financial data", "Subawards and pass-through requirements tracked with defined milestones and SLAs", "Leadership dashboards draw from agreed definitions (single reporting logic)"],
+    opengov: "OG Grants Management Essentials",
+    insight: "Entry ICP: cities 10K–80K pop, small counties, community colleges. Annual grant portfolio typically <$10M. First purpose-built system.",
+    pricing: { low: 12000, high: 20000, label: "$12K–$20K/yr" },
+    implFee: "$9K fixed",
+    competitorBenchmark: "Undercuts AmpliFund core entry ($20K+) by 15–40%",
+    vsCompetitor: "AmpliFund charges $20K+ for comparable entry tier. OpenGov Essentials at $12K–$20K with fixed $9K implementation vs. AmpliFund's $175–195/hr open-ended impl cost.",
+  },
+  {
+    level: 4, label: "Advanced", tag: "ADVANCED",
+    color: "#185FA5", bg: "#EBF3FB",
+    bullets: ["One system of record for program, finance, and compliance artefacts tied to each award", "Automation for reminders, amendments, draw schedules, and recurring compliance tasks", "Pipeline and scenario views: capacity, funding mix, risk flags, and executive rollups"],
+    opengov: "OG Grants Management Advanced",
+    insight: "Primary ICP: cities 30K–300K pop, mid counties, state agencies. Annual grant portfolio $10M–$50M. Replacing AmpliFund or Tyler module.",
+    pricing: { low: 25000, high: 45000, label: "$25K–$45K/yr" },
+    implFee: "$15K–$20K fixed",
+    competitorBenchmark: "Aligns with AmpliFund mid-market ($27K median). Win on integration + fixed impl.",
+    vsCompetitor: "AmpliFund median for this segment is $27.5K–$40K/yr + variable impl ($45K median). OpenGov Advanced at $25K–$45K with fixed impl eliminates cost uncertainty.",
+  },
+  {
+    level: 5, label: "Strategic", tag: "STRATEGIC",
+    color: "#533AB7", bg: "#EEEDFE",
+    bullets: ["Cross-functional planning: grants aligned with capital plans, strategic priorities, and outcomes", "Portfolio-level performance and risk management; forecasting informed by one trusted dataset", "Continuous improvement: processes refined using metrics, not one-off fire drills"],
+    opengov: "OG Grants Management Strategic",
+    insight: "Top ICP: large cities 300K+, state enterprise, multi-department orgs. Grant portfolio $50M+. Platform-connected strategy.",
+    pricing: { low: 55000, high: 150000, label: "$55K–$150K/yr" },
+    implFee: "$25K–$50K fixed",
+    competitorBenchmark: "Below AmpliFund enterprise ($185K–$595K). Win on platform value + AI + fixed cost.",
+    vsCompetitor: "AmpliFund enterprise (CHP $595K, FL Gov $485K) uses hourly billing, Azure tenant fees, multi-year lock-in. OpenGov Strategic offers predictable pricing with full Public Service Platform connectivity.",
+  },
+];
+const WIN_THEMES = [
+  {
+    title: "Fixed implementation fee vs. open-ended hourly billing",
+    icon: "🔒",
+    detail: "AmpliFund bills $175–$195/hr for out-of-scope implementation. South Fulton GA paid $193.82/hr for 34 extra hours on top of their subscription. Polk County Fire Rescue paid $191K in implementation alone — twice in one year on two contract variants. OpenGov's fixed-fee implementation ($9K–$50K depending on tier) eliminates this risk entirely. In a procurement, this is a concrete, quantifiable advantage.",
+    evidence: "GovSpend: Polk County Fire Rescue $191K × 2 impl POs. South Fulton GA $6,590 extra impl hours.",
+    urgency: "High",
+  },
+  {
+    title: "Platform integration vs. point solution",
+    icon: "🔗",
+    detail: "Every Gong call where a customer already uses OpenGov for procurement, budgeting, or asset management becomes an almost automatic close. 'The data flows nicely' (Gila County). AmpliFund cannot offer this — they have no native connection to capital planning, budgeting, or procurement. OpenGov's 900+ API integrations and native Public Service Platform connectivity are impossible to match.",
+    evidence: "Gong: Gila County, Linn County IA — existing OpenGov relationship = primary win driver.",
+    urgency: "High",
+  },
+  {
+    title: "Purpose-built government vs. ERP module",
+    icon: "🏛️",
+    detail: "Tyler Munis/New World grants modules are described as 'broken' across multiple Gong calls. City of Coachella: 'partners that come from Tyler — they try the accounting module for grants and it just doesn't do what we need.' This is the largest opportunity: the Tyler installed base is enormous, the grants module satisfaction is universally low, and OpenGov already integrates with Tyler rather than replacing it.",
+    evidence: "Gong: Gila County, City of Coachella, Town of Sahuarita — all displacing Tyler ERP grants module.",
+    urgency: "Highest",
+  },
+  {
+    title: "Co-op procurement gap — the #1 commercial risk",
+    icon: "⚠️",
+    detail: "AmpliFund drives massive volume through NASPO Valuepoint (AR2472), Sourcewell (121923-SHI), and state ITS vehicles. These let buyers skip the RFP entirely. Illinois statewide NASPO deal = $6.3M. OpenGov has no equivalent grants-specific co-op listing. Until this gap is closed, every procurement in IL, CA, FL, TX where AmpliFund is on a co-op is a structural disadvantage.",
+    evidence: "GovSpend: IL statewide $6.3M via NASPO. IL DHS $424K via NASPO. MA ITS75 vehicle = Lowell $128K.",
+    urgency: "Highest",
+  },
+  {
+    title: "Predictable pricing vs. unpredictable escalation",
+    icon: "📈",
+    detail: "CA Highway Patrol paid $290K in 2023, $297.5K in 2024, then $595.2K in 2025 — a near-doubling. County of Grant NM went from $42.9K to $20K (scope reduction). AmpliFund pricing is not locked. OpenGov's tiered fixed pricing with clear upgrade triggers (Essentials → Advanced → Strategic) gives finance teams what they need: a 3-year cost model that doesn't change.",
+    evidence: "GovSpend: CHP $290K→$297.5K→$595.2K across 3 years.",
+    urgency: "Medium",
+  },
+  {
+    title: "AI-native tier (Strategic) — no competitor has this",
+    icon: "🤖",
+    detail: "No grants management competitor currently offers AI-powered NOA/PDF award import, AI narrative report drafting (CDBG, ARPA, EPA), AI budget compliance flagging, or AI-generated monitoring schedules. This is a 12–18 month window where OpenGov can establish AI as a tier-defining differentiator. AmpliFund has no AI roadmap visible in GovSpend or public sources.",
+    evidence: "Your Tier 3 feature list. AmpliFund has no public AI product announcement.",
+    urgency: "Medium (but time-limited window)",
+  },
+];
+
+(function () {
+  "use strict";
+
+  var TABS = ["Competitor Pricing", "CMM & Tier Design", "Win Themes", "Pricing Architecture"];
+
+  function escapeHtml(s) {
+    if (s == null) return "";
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function fmt(v) {
+    return "$" + Math.round(v).toLocaleString();
+  }
+
+  var VENDOR_COLORS = {
+    "AmpliFund / Euna": "#185FA5",
+    eCivis: "#B7791F",
+    Neighborly: "#0F766E",
+    OpenGov: "#1A6B5A",
+    Submittable: "#533AB7",
+    ZoomGrants: "#888780",
+    Instrumentl: "#888780",
+  };
+  function vColor(v) {
+    return VENDOR_COLORS[v] || "#888780";
+  }
+
+  function urgencyStyle(u) {
+    if (u.indexOf("Highest") >= 0) return { bg: "#FEE9E9", color: "#C53030" };
+    if (u.indexOf("High") >= 0) return { bg: "#FFFBEB", color: "#B7791F" };
+    return { bg: "#EAF5F2", color: "#1A6B5A" };
+  }
+
+  function median(arr) {
+    var s = arr.slice().sort(function (a, b) {
+      return a - b;
+    });
+    return s[Math.floor(s.length / 2)];
+  }
+
+  var state = { tab: 0, selectedComp: null };
+
+  var MARKET_SVG =
+    '<svg viewBox="0 0 920 260" role="img" aria-label="Illustrative competitor subscription spread" style="width:100%;height:auto;display:block">' +
+    '<defs><linearGradient id="barAf" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#185FA5" stop-opacity="0.95"/><stop offset="100%" stop-color="#185FA5" stop-opacity="0.55"/></linearGradient>' +
+    '<linearGradient id="barOg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1A6B5A" stop-opacity="0.95"/><stop offset="100%" stop-color="#1A6B5A" stop-opacity="0.55"/></linearGradient>' +
+    '<linearGradient id="barOther" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#64748B" stop-opacity="0.85"/><stop offset="100%" stop-color="#94A3B8" stop-opacity="0.5"/></linearGradient></defs>' +
+    '<rect width="920" height="260" rx="12" fill="#f1f5f9"/>' +
+    '<text x="460" y="36" text-anchor="middle" fill="#475569" font-size="13" font-weight="600" font-family="system-ui,sans-serif">Market competitor pricing (subscription POs — illustrative spread)</text>' +
+    '<text x="460" y="56" text-anchor="middle" fill="#94a3b8" font-size="10" font-family="system-ui,sans-serif">Use the live chart below for exact GovSpend values</text>' +
+    '<line x1="80" y1="210" x2="860" y2="210" stroke="#CBD5E1" stroke-width="1"/>' +
+    '<text x="80" y="232" fill="#94a3b8" font-size="9" font-family="system-ui,sans-serif">Lower annual PO</text>' +
+    '<text x="800" y="232" text-anchor="end" fill="#94a3b8" font-size="9" font-family="system-ui,sans-serif">Higher annual PO →</text>' +
+    '<text x="76" y="102" text-anchor="end" fill="#185FA5" font-size="10" font-weight="600" font-family="system-ui,sans-serif">AmpliFund / Euna</text>' +
+    [0.12, 0.18, 0.22, 0.28, 0.35, 0.42, 0.52, 0.62, 0.78, 0.88]
+      .map(function (t, i) {
+        return (
+          '<circle cx="' +
+          (80 + t * 760) +
+          '" cy="96" r="5" fill="url(#barAf)" opacity="' +
+          (0.75 + (i % 3) * 0.08) +
+          '"/>'
+        );
+      })
+      .join("") +
+    '<text x="76" y="142" text-anchor="end" fill="#B7791F" font-size="10" font-weight="600" font-family="system-ui,sans-serif">eCivis</text>' +
+    [0.38, 0.45, 0.52]
+      .map(function (t) {
+        return '<circle cx="' + (80 + t * 760) + '" cy="136" r="5" fill="#B7791F" opacity="0.8"/>';
+      })
+      .join("") +
+    '<text x="76" y="182" text-anchor="end" fill="#1A6B5A" font-size="10" font-weight="600" font-family="system-ui,sans-serif">OpenGov</text>' +
+    '<circle cx="' +
+    (80 + 0.48 * 760) +
+    '" cy="176" r="6" fill="url(#barOg)"/>' +
+    '<text x="76" y="222" text-anchor="end" fill="#64748B" font-size="10" font-weight="600" font-family="system-ui,sans-serif">Neighborly · Submittable · ZoomGrants…</text>' +
+    [0.08, 0.12, 0.15, 0.2, 0.24]
+      .map(function (t) {
+        return '<circle cx="' + (80 + t * 760) + '" cy="216" r="4" fill="url(#barOther)" opacity="0.9"/>';
+      })
+      .join("") +
+    "</svg>";
+
+  function buildDotChart() {
+    var subDeals = GOVSPEND.filter(function (r) {
+      return r.cat === "sub" || r.cat === "both";
+    });
+    var vendorGroups = {};
+    subDeals.forEach(function (r) {
+      if (!vendorGroups[r.vendor]) vendorGroups[r.vendor] = [];
+      vendorGroups[r.vendor].push(r.amount);
+    });
+    var flat = Object.values(vendorGroups).reduce(function (a, b) {
+      return a.concat(b);
+    }, []);
+    var chartMax = Math.max.apply(null, flat);
+    var entries = Object.entries(vendorGroups).sort(function (a, b) {
+      return median(b[1]) - median(a[1]);
+    });
+    var rows = entries
+      .map(function (pair) {
+        var vendor = pair[0];
+        var amounts = pair[1];
+        var med = median(amounts);
+        var medPct = Math.round((med / chartMax) * 100);
+        var deals = subDeals.filter(function (r) {
+          return r.vendor === vendor;
+        });
+        var dots = amounts
+          .map(function (a, i) {
+            var pct = Math.round((a / chartMax) * 100);
+            var deal = deals[i];
+            var dotColor =
+              deal && deal.cat === "impl"
+                ? "#185FA5"
+                : deal && deal.cat === "both"
+                  ? "#533AB7"
+                  : deal && deal.cat === "addon"
+                    ? "#B7791F"
+                    : "#1A6B5A";
+            var title =
+              fmt(a) +
+              " — " +
+              (deal && deal.cat === "impl"
+                ? "Implementation"
+                : deal && deal.cat === "both"
+                  ? "Sub + Impl"
+                  : deal && deal.cat === "addon"
+                    ? "Add-on"
+                    : "Subscription") +
+              " — " +
+              (deal ? escapeHtml(deal.agency) : "");
+            return (
+              '<div title="' +
+              title +
+              '" style="position:absolute;left:' +
+              pct +
+              "%;top:50%;transform:translate(-50%,-50%);width:10px;height:10px;border-radius:50%;background:' +
+              dotColor +
+              ';opacity:0.8"></div>'
+            );
+          })
+          .join("");
+        return (
+          '<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">' +
+          '<span style="font-size:10px;width:130px;flex-shrink:0;color:var(--cts);text-align:right">' +
+          escapeHtml(vendor) +
+          "</span>" +
+          '<div style="flex:1;position:relative;height:24px">' +
+          '<div style="position:absolute;left:' +
+          medPct +
+          "%;top:0;bottom:0;width:2px;background:" +
+          vColor(vendor) +
+          ';opacity:0.4;border-radius:1px"></div>' +
+          dots +
+          "</div>" +
+          '<span style="font-size:11px;font-weight:500;width:70px;text-align:right;flex-shrink:0">med ' +
+          fmt(med) +
+          "</span>" +
+          '<span style="font-size:10px;color:var(--ctt);width:40px;text-align:right;flex-shrink:0">' +
+          amounts.length +
+          " POs</span></div>"
+        );
+      })
+      .join("");
+    return (
+      '<div class="card pad">' +
+      '<p class="lbl">Annual subscription PO amounts by vendor (each dot = one deal)</p>' +
+      rows +
+      '<div style="display:flex;align-items:center;gap:8px;margin-top:6px;padding-top:10px;border-top:0.5px solid var(--cb)">' +
+      '<span style="width:130px;flex-shrink:0"></span>' +
+      '<div style="flex:1;display:flex;justify-content:space-between"><span style="font-size:10px;color:var(--ctt)">← $0 (annual PO amount)</span>' +
+      '<span style="font-size:10px;color:var(--ctt)">' +
+      fmt(chartMax) +
+      " →</span></div><span style=\"width:110px;flex-shrink:0\"></span></div>" +
+      '<div style="display:flex;align-items:center;gap:16px;margin-top:10px;flex-wrap:wrap">' +
+      '<span style="font-size:10px;color:var(--ctt)">Each dot = one PO:</span>' +
+      '<div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:50%;background:#1A6B5A;opacity:0.75"></div>' +
+      '<span style="font-size:10px;padding:1px 6px;border-radius:3px;background:#EAF5F2;color:#1A6B5A;font-weight:500">Subscription</span></div>' +
+      '<div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:50%;background:#185FA5;opacity:0.75"></div>' +
+      '<span style="font-size:10px;padding:1px 6px;border-radius:3px;background:#EBF3FB;color:#185FA5;font-weight:500">Implementation</span></div>' +
+      '<div style="display:flex;align-items:center;gap:5px"><div style="width:2px;height:14px;background:#888;opacity:0.4;border-radius:1px"></div>' +
+      '<span style="font-size:10px;color:var(--ctt)">vertical bar = median</span></div></div></div>'
+    );
+  }
+
+  function buildCompetitors() {
+    return COMPETITORS.map(function (c) {
+      var isOpen = state.selectedComp === c.name;
+      var body = "";
+      if (isOpen) {
+        body =
+          '<div style="padding:0 16px 16px;border-top:0.5px solid var(--cb)">' +
+          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px">' +
+          "<div><p class=\"mt\">What they charge</p>" +
+          '<p style="font-size:12px;color:var(--cts);margin:0 0 10px;line-height:1.6">' +
+          escapeHtml(c.whatTheyCharge) +
+          "</p>" +
+          '<p class="mt">Strengths</p>' +
+          c.strengths
+            .map(function (s) {
+              return '<p style="font-size:11px;color:var(--cts);margin:0 0 3px">+ ' + escapeHtml(s) + "</p>";
+            })
+            .join("") +
+          "</div><div>" +
+          '<p class="mt">Weaknesses / gaps</p>' +
+          c.weaknesses
+            .map(function (w) {
+              return '<p style="font-size:11px;color:var(--cts);margin:0 0 3px">− ' + escapeHtml(w) + "</p>";
+            })
+            .join("") +
+          '<p class="mt" style="margin-top:12px">How to win</p>' +
+          '<p style="font-size:12px;font-weight:500;color:var(--cti);margin:0">' +
+          escapeHtml(c.winCondition) +
+          "</p></div></div></div>";
+      }
+      return (
+        '<div class="comp-card" data-comp-name="' +
+        escapeHtml(c.name) +
+        '" style="background:var(--cbg);border:0.5px solid ' +
+        (isOpen ? c.color : "var(--cbd)") +
+        ';border-radius:8px;overflow:hidden;cursor:pointer">' +
+        '<div style="display:flex;align-items:center;gap:12px;padding:12px 16px">' +
+        '<span style="font-size:10px;padding:2px 7px;border-radius:3px;font-weight:600;background:' +
+        c.bg +
+        ";color:" +
+        c.color +
+        ';flex-shrink:0">' +
+        escapeHtml(c.name) +
+        "</span>" +
+        '<span style="font-size:12px;color:var(--cts);flex:1">' +
+        escapeHtml(c.marketPos) +
+        "</span>" +
+        '<span style="font-size:12px;font-weight:500;color:var(--cti);min-width:100px;text-align:right">' +
+        escapeHtml(c.subRange) +
+        "</span>" +
+        '<span style="font-size:11px;color:var(--ctt)">' +
+        (isOpen ? "▲" : "▼") +
+        "</span></div>" +
+        body +
+        "</div>"
+      );
+    }).join("");
+  }
+
+  function buildGovTable() {
+    var sorted = GOVSPEND.slice().sort(function (a, b) {
+      return b.amount - a.amount;
+    });
+    var catMap = {
+      sub: { bg: "#EAF5F2", color: "#1A6B5A", label: "Sub" },
+      impl: { bg: "#EBF3FB", color: "#185FA5", label: "Impl" },
+      both: { bg: "#EEEDFE", color: "#533AB7", label: "Both" },
+      addon: { bg: "#FFFBEB", color: "#B7791F", label: "Add-on" },
+    };
+    return sorted
+      .map(function (r, i) {
+        var cs = catMap[r.cat] || catMap.sub;
+        var comp = COMPETITORS.find(function (x) {
+          return x.name === r.vendor;
+        });
+        var bg = comp ? comp.bg : "#F1F5F9";
+        var col = comp ? comp.color : "#444";
+        return (
+          '<tr style="border-bottom:0.5px solid var(--cb);background:' +
+          (i % 2 === 0 ? "transparent" : "var(--cbs)") +
+          '">' +
+          '<td style="padding:7px 10px"><span style="font-size:9px;padding:1px 5px;border-radius:3px;font-weight:600;background:' +
+          bg +
+          ";color:" +
+          col +
+          '">' +
+          escapeHtml(r.vendor) +
+          "</span></td>" +
+          '<td style="padding:7px 10px;color:var(--cts)">' +
+          escapeHtml(r.agency) +
+          "</td>" +
+          '<td style="padding:7px 10px;color:var(--ctt)">' +
+          escapeHtml(r.state) +
+          "</td>" +
+          '<td style="padding:7px 10px;color:var(--ctt)">' +
+          escapeHtml(r.type) +
+          "</td>" +
+          '<td style="padding:7px 10px;text-align:right;font-weight:500">' +
+          fmt(r.amount) +
+          "</td>" +
+          '<td style="padding:7px 10px;color:var(--ctt);white-space:nowrap">' +
+          escapeHtml(r.date) +
+          "</td>" +
+          '<td style="padding:7px 10px"><span style="font-size:9px;padding:1px 5px;border-radius:3px;font-weight:600;background:' +
+          cs.bg +
+          ";color:" +
+          cs.color +
+          '">' +
+          cs.label +
+          "</span></td>" +
+          '<td style="padding:7px 10px;color:var(--cts);max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="' +
+          escapeHtml(r.desc) +
+          '">' +
+          escapeHtml(r.desc) +
+          "</td></tr>"
+        );
+      })
+      .join("");
+  }
+
+  function buildCmmTiers() {
+    return CMM.map(function (tier) {
+      var bullets = tier.bullets
+        .map(function (b) {
+          return (
+            '<p style="font-size:12px;color:var(--cts);margin:0;display:flex;align-items:flex-start;gap:6px">' +
+            '<span style="color:' +
+            tier.color +
+            ';flex-shrink:0">•</span> ' +
+            escapeHtml(b) +
+            "</p>"
+          );
+        })
+        .join("");
+      var vs = tier.vsCompetitor
+        ? '<div style="margin-top:10px;padding:8px 12px;background:var(--cbs);border-radius:6px;border-left:3px solid ' +
+          tier.color +
+          '">' +
+          '<p class="mt">vs. Competitors</p>' +
+          '<p style="font-size:11px;color:var(--cts);margin:0;line-height:1.5">' +
+          escapeHtml(tier.vsCompetitor) +
+          "</p></div>"
+        : "";
+      var price =
+        tier.pricing && tier.opengov
+          ? '<span style="font-size:11px;padding:2px 8px;border-radius:4px;font-weight:600;background:' +
+            tier.bg +
+            ";color:" +
+            tier.color +
+            '">' +
+            escapeHtml(tier.pricing.label) +
+            "</span>"
+          : "";
+      var impl =
+        tier.implFee && tier.opengov
+          ? '<span style="font-size:10px;padding:2px 7px;border-radius:4px;background:var(--cbs);color:var(--cts)">Impl: ' +
+            escapeHtml(tier.implFee) +
+            "</span>"
+          : "";
+      return (
+        '<div style="padding:16px 18px;background:' +
+        (tier.opengov ? "var(--cbg)" : "var(--cbs)") +
+        ";border:0.5px solid " +
+        (tier.opengov ? tier.color : "var(--cbd)") +
+        ";border-radius:8px;opacity:" +
+        (tier.opengov ? "1" : "0.7") +
+        '">' +
+        '<div style="display:flex;align-items:flex-start;gap:14px">' +
+        '<div style="flex-shrink:0;text-align:center;width:48px">' +
+        '<div style="font-size:22px;font-weight:500;color:' +
+        tier.color +
+        ';line-height:1">' +
+        tier.level +
+        "</div>" +
+        '<div style="font-size:9px;color:' +
+        tier.color +
+        ';font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px">' +
+        escapeHtml(tier.tag) +
+        "</div></div>" +
+        '<div style="flex:1">' +
+        '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap">' +
+        '<p style="font-size:14px;font-weight:500;margin:0">' +
+        escapeHtml(tier.opengov || tier.label) +
+        "</p>" +
+        price +
+        impl +
+        "</div>" +
+        '<div style="display:flex;flex-direction:column;gap:3px;margin-bottom:' +
+        (tier.vsCompetitor ? "10px" : "0") +
+        '">' +
+        bullets +
+        "</div>" +
+        vs +
+        (tier.insight
+          ? '<p style="font-size:11px;color:var(--ctt);margin:8px 0 0;font-style:italic">' +
+            escapeHtml(tier.insight) +
+            "</p>"
+          : "") +
+        "</div></div></div>"
+      );
+    }).join("");
+  }
+
+  var FEATURE_ROWS = [
+    ["Award register, budget, deadlines, document vault", "✓", "✓", "✓"],
+    ["SF-425 / FFR export support", "✓", "✓", "✓"],
+    ["7-year immutable audit log", "✓", "✓", "✓"],
+    ["Compliance conditions tracker", "✓", "✓", "✓"],
+    ["Subrecipient basics (roster, monitoring log)", "✓", "✓", "✓"],
+    ["Role-based workflows & approvals", "—", "✓", "✓"],
+    ["Native ERP / GL integration (auto-sync)", "—", "✓", "✓"],
+    ["Budget modification tracking + history", "—", "✓", "✓"],
+    ["Burn rate analytics + projections", "—", "✓", "✓"],
+    ["Full subrecipient monitoring workflows", "—", "✓", "✓"],
+    ["Closeout checklist & final reporting", "—", "✓", "✓"],
+    ["Narrative reporting workspace", "—", "✓", "✓"],
+    ["AI award import (NOA / PDF parsing)", "—", "—", "✓"],
+    ["AI narrative report drafting (CDBG, ARPA, EPA)", "—", "—", "✓"],
+    ["AI budget compliance flagging", "—", "—", "✓"],
+    ["Portfolio analytics + forecasting", "—", "—", "✓"],
+    ["Subrecipient application portal", "—", "—", "✓"],
+    ["Auditor access + one-click audit package", "—", "—", "✓"],
+    ["Public Service Platform connectivity (full)", "—", "—", "✓"],
+    ["SSO + unlimited departments", "—", "—", "✓"],
+  ];
+
+  function buildFeatureTable() {
+    return FEATURE_ROWS.map(function (row, i) {
+      var feat = row[0];
+      var vals = row.slice(1);
+      return (
+        '<tr style="border-bottom:0.5px solid var(--cb);background:' +
+        (i % 2 === 0 ? "transparent" : "var(--cbs)") +
+        '">' +
+        '<td style="padding:7px 14px;color:var(--cts)">' +
+        escapeHtml(feat) +
+        "</td>" +
+        vals
+          .map(function (v, j) {
+            var c = CMM[j + 2];
+            return (
+              '<td style="padding:7px 12px;text-align:center;font-weight:' +
+              (v === "✓" ? "500" : "400") +
+              ";color:" +
+              (v === "✓" ? c.color : "var(--ctt)") +
+              '">' +
+              v +
+              "</td>"
+            );
+          })
+          .join("") +
+        "</tr>"
+      );
+    }).join("");
+  }
+
+  function buildWinThemes() {
+    return WIN_THEMES.map(function (w, i) {
+      var us = urgencyStyle(w.urgency);
+      return (
+        '<div style="padding:14px 16px;background:var(--cbg);border:0.5px solid var(--cbd);border-radius:8px">' +
+        '<div style="display:flex;align-items:flex-start;gap:12px">' +
+        '<span style="font-size:20px;flex-shrink:0">' +
+        w.icon +
+        "</span>" +
+        '<div style="flex:1">' +
+        '<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap">' +
+        '<p style="font-size:13px;font-weight:500;margin:0">' +
+        (i + 1) +
+        ". " +
+        escapeHtml(w.title) +
+        "</p>" +
+        '<span style="font-size:9px;padding:2px 7px;border-radius:3px;font-weight:600;background:' +
+        us.bg +
+        ";color:" +
+        us.color +
+        ';flex-shrink:0">' +
+        escapeHtml(w.urgency) +
+        "</span></div>" +
+        '<p style="font-size:12px;color:var(--cts);margin:0 0 8px;line-height:1.6">' +
+        escapeHtml(w.detail) +
+        "</p>" +
+        '<div style="padding:6px 10px;background:var(--cbs);border-radius:5px;display:inline-block">' +
+        '<p style="font-size:10px;color:var(--ctt);margin:0">Evidence: ' +
+        escapeHtml(w.evidence) +
+        "</p></div></div></div></div>"
+      );
+    }).join("");
+  }
+
+  var PRICING_COMPARE = [
+    { name: "OpenGov (proposed)", color: "#1A6B5A", bg: "#EAF5F2", entry: "$12K–$20K", mid: "$25K–$45K", ent: "$55K–$150K", impl: "Fixed fee" },
+    { name: "AmpliFund / Euna", color: "#185FA5", bg: "#EBF3FB", entry: "$5K–$20K", mid: "$20K–$65K", ent: "$185K–$595K", impl: "$175–195/hr (open-ended)" },
+    { name: "eCivis", color: "#B7791F", bg: "#FFFBEB", entry: "$24K", mid: "$45K–$75K", ent: "Not public", impl: "Not visible" },
+    { name: "Neighborly", color: "#0F766E", bg: "#E6FAFA", entry: "$4K–$8K", mid: "$17K–$21K", ent: "N/A", impl: "Minimal" },
+    { name: "Submittable", color: "#6B3FA0", bg: "#F3EEFF", entry: "$7K–$15K", mid: "$15K–$30K", ent: "Custom", impl: "Minimal (intake only)" },
+    { name: "ZoomGrants / Instrumentl", color: "#888780", bg: "#F1F5F9", entry: "$1.5K–$6K", mid: "N/A", ent: "N/A", impl: "None" },
+    { name: "Tyler (ERP module)", color: "#533AB7", bg: "#EEEDFE", entry: "Bundled", mid: "Bundled", ent: "Bundled", impl: "ERP contract" },
+  ];
+
+  var RECS = [
+    { n: "1", title: "Lead with fixed implementation fee as a sales weapon", body: "Every proposal should prominently contrast OpenGov's fixed implementation fee against AmpliFund's hourly billing. Calculate the risk: a 300-hour AmpliFund implementation at $195/hr = $58,500 before the first day of go-live. OpenGov's fixed fee removes that uncertainty entirely. This resonates especially with finance directors and procurement officers." },
+    { n: "2", title: "Price Essentials to make the 'first system' decision easy", body: "At $12K–$20K/yr, Essentials undercuts AmpliFund's real-world entry pricing by 15–40%. The goal is not margin maximisation at Essentials — it's to get the agency into the OpenGov ecosystem. The upgrade path to Advanced and Strategic is where the economics work. Make the entry price a 'no-brainer' compared to the cost of a grants consultant ($20K–$70K/yr, non-scalable)." },
+    { n: "3", title: "Get on NASPO Valuepoint or Sourcewell for Grants — urgently", body: "This is the single highest-impact commercial action. AmpliFund's Illinois statewide NASPO deal alone was $6.3M. Co-op vehicles in IL, CA, FL, TX allow agencies to bypass RFPs entirely. Until OpenGov has an equivalent grants-specific co-op listing, every deal in a high co-op state is structurally harder to close than it needs to be." },
+    { n: "4", title: "Position AI features as a tier gate, not a free upgrade", body: "AI award import, AI narrative drafting, and AI budget compliance flagging should be Strategic-only at launch. This makes Strategic genuinely differentiated from Advanced in a way no competitor can immediately replicate. In 12–18 months, AI will likely cascade to Advanced — use the window to establish OpenGov as the AI-native grants platform." },
+    { n: "5", title: "Build the 'already an OpenGov customer' motion first", body: "Gong calls are clear: when a prospect already uses OpenGov for procurement, budgeting, or asset management, the grants deal is significantly easier to close. The platform integration story ('your CIP projects will connect to your grants automatically') is impossible for AmpliFund to replicate. Prioritise these accounts — they should be in the first 20 grants wins." },
+  ];
+
+  function buildPricingArch() {
+    var cards = CMM.filter(function (t) {
+      return t.opengov;
+    })
+      .map(function (tier) {
+        return (
+          '<div style="padding:18px 20px;background:var(--cbg);border:1px solid ' +
+          tier.color +
+          ';border-radius:10px">' +
+          '<p style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:' +
+          tier.color +
+          ';margin:0 0 4px">' +
+          escapeHtml(tier.tag) +
+          "</p>" +
+          '<p style="font-size:14px;font-weight:500;margin:0 0 12px">' +
+          escapeHtml(tier.opengov) +
+          "</p>" +
+          '<div style="font-size:24px;font-weight:500;color:' +
+          tier.color +
+          ';margin:0 0 4px">' +
+          escapeHtml(tier.pricing.label) +
+          "</div>" +
+          '<p style="font-size:11px;color:var(--cts);margin:0 0 12px">Implementation: ' +
+          escapeHtml(tier.implFee) +
+          " (fixed)</p>" +
+          '<div style="padding:8px 10px;background:' +
+          tier.bg +
+          ';border-radius:6px;margin-bottom:10px">' +
+          '<p style="font-size:10px;color:' +
+          tier.color +
+          ';font-weight:600;margin:0 0 3px;text-transform:uppercase;letter-spacing:0.5px">Competitor benchmark</p>' +
+          '<p style="font-size:11px;color:var(--cts);margin:0;line-height:1.5">' +
+          escapeHtml(tier.competitorBenchmark) +
+          "</p></div>" +
+          '<p style="font-size:10px;color:var(--ctt);margin:0;font-style:italic">' +
+          escapeHtml(tier.insight) +
+          "</p></div>"
+        );
+      })
+      .join("");
+
+    var compareRows = PRICING_COMPARE.map(function (r, i) {
+      return (
+        '<tr style="border-bottom:0.5px solid var(--cb);background:' +
+        (i === 0 ? r.bg : i % 2 === 0 ? "transparent" : "var(--cbs)") +
+        '">' +
+        '<td style="padding:8px 14px"><span style="font-size:10px;padding:1px 6px;border-radius:3px;font-weight:600;background:' +
+        r.bg +
+        ";color:" +
+        r.color +
+        '">' +
+        escapeHtml(r.name) +
+        "</span></td>" +
+        '<td style="padding:8px 12px;text-align:right;font-weight:' +
+        (i === 0 ? "500" : "400") +
+        '">' +
+        escapeHtml(r.entry) +
+        "</td>" +
+        '<td style="padding:8px 12px;text-align:right;font-weight:' +
+        (i === 0 ? "500" : "400") +
+        '">' +
+        escapeHtml(r.mid) +
+        "</td>" +
+        '<td style="padding:8px 12px;text-align:right;font-weight:' +
+        (i === 0 ? "500" : "400") +
+        '">' +
+        escapeHtml(r.ent) +
+        "</td>" +
+        '<td style="padding:8px 12px;text-align:right;color:' +
+        (i === 0 ? r.color : "var(--cts)") +
+        ";font-weight:" +
+        (i === 0 ? "500" : "400") +
+        '">' +
+        escapeHtml(r.impl) +
+        "</td></tr>"
+      );
+    }).join("");
+
+    var recHtml = RECS.map(function (r) {
+      return (
+        '<div style="padding:12px 16px;background:var(--cbg);border:0.5px solid var(--cbd);border-radius:8px">' +
+        '<p style="font-size:13px;font-weight:500;margin:0 0 6px">' +
+        escapeHtml(r.n) +
+        ". " +
+        escapeHtml(r.title) +
+        "</p>" +
+        '<p style="font-size:12px;color:var(--cts);margin:0;line-height:1.6">' +
+        escapeHtml(r.body) +
+        "</p></div>"
+      );
+    }).join("");
+
+    return (
+      '<div style="background:var(--cbs);border-radius:8px;padding:12px 16px;margin-bottom:20px">' +
+      '<p style="font-size:12px;color:var(--cts);margin:0;line-height:1.6">Recommended pricing anchors — derived from GovSpend actuals for each tier\'s ICP segment. The core principle: <strong>undercut AmpliFund subscription price by 15–30% at Essentials, match at Advanced, and win on platform value at Strategic.</strong> Fixed implementation fees are a competitive weapon — use them aggressively in proposals.</p></div>' +
+      '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:24px">' +
+      cards +
+      "</div>" +
+      '<p class="sec">OpenGov vs competitor pricing — by tier (median subscription)</p>' +
+      '<div class="card" style="overflow:hidden;margin-bottom:20px"><div style="overflow-x:auto"><table class="tbl">' +
+      "<thead><tr style=\"border-bottom:0.5px solid var(--cb);background:var(--cbs)\">" +
+      '<th style="padding:8px 14px;text-align:left;font-weight:500;color:var(--cts)">Vendor</th>' +
+      '<th style="padding:8px 12px;text-align:right;font-weight:500;color:var(--cts)">Entry / Small</th>' +
+      '<th style="padding:8px 12px;text-align:right;font-weight:500;color:var(--cts)">Mid-market</th>' +
+      '<th style="padding:8px 12px;text-align:right;font-weight:500;color:var(--cts)">Enterprise</th>' +
+      '<th style="padding:8px 12px;text-align:right;font-weight:500;color:var(--cts)">Impl model</th>' +
+      "</tr></thead><tbody>" +
+      compareRows +
+      "</tbody></table></div></div>" +
+      '<p class="sec">Key pricing recommendations</p>' +
+      '<div style="display:flex;flex-direction:column;gap:8px">' +
+      recHtml +
+      "</div>"
+    );
+  }
+
+  function render() {
+    var nav = TABS.map(function (t, i) {
+      return (
+        '<button type="button" data-tab-index="' +
+        i +
+        '" class="tab-btn' +
+        (state.tab === i ? " active" : "") +
+        '">' +
+        escapeHtml(t) +
+        "</button>"
+      );
+    }).join("");
+
+    var tab0 =
+      '<p class="sec">Real-world subscription pricing — from live GovSpend purchase orders (last 12 months)</p>' +
+      '<figure class="card" style="margin:0 0 18px;padding:12px 14px 14px;overflow:hidden">' +
+      MARKET_SVG +
+      '<figcaption style="font-size:10px;color:var(--ctt);padding:8px 4px 0;line-height:1.45">Built-in market snapshot (illustrative). Quantitative detail is in the chart and table below.</figcaption></figure>' +
+      buildDotChart() +
+      '<p class="sec" style="margin-top:1rem">Competitor profiles — click to expand</p>' +
+      '<div id="comp-wrap" style="display:flex;flex-direction:column;gap:8px">' +
+      buildCompetitors() +
+      "</div>" +
+      '<p class="sec">All GovSpend software POs (last 12 months)</p>' +
+      '<div class="card" style="overflow:hidden"><div style="overflow-x:auto"><table class="tbl">' +
+      "<thead><tr style=\"border-bottom:0.5px solid var(--cb);background:var(--cbs)\">" +
+      ["Vendor", "Agency", "State", "Type", "Amount", "Date", "Category", "Description"]
+        .map(function (h) {
+          return (
+            '<th style="padding:8px 10px;text-align:' +
+            (h === "Amount" ? "right" : "left") +
+            ';font-weight:500;color:var(--cts);white-space:nowrap">' +
+            h +
+            "</th>"
+          );
+        })
+        .join("") +
+      "</tr></thead><tbody>" +
+      buildGovTable() +
+      "</tbody></table></div></div>";
+
+    var tab1 =
+      '<div style="background:var(--cbs);border-radius:8px;padding:12px 16px;margin-bottom:16px">' +
+      '<p style="font-size:12px;font-weight:500;margin:0 0 4px">Verdict on your CMM framework</p>' +
+      '<p style="font-size:12px;color:var(--cts);margin:0;line-height:1.6">Your 5-level CMM is structurally sound and well-grounded in how government grants teams actually mature. Levels 1–2 accurately describe the status quo (Gong calls confirm this universally — spreadsheets, yellow folders, Tyler modules). Levels 3–5 map cleanly onto Essentials / Advanced / Strategic.</p></div>' +
+      '<div style="display:flex;flex-direction:column;gap:10px">' +
+      buildCmmTiers() +
+      "</div>" +
+      '<p class="sec">Feature differentiation by tier</p>' +
+      '<div class="card" style="overflow:hidden"><div style="overflow-x:auto"><table class="tbl">' +
+      "<thead><tr style=\"border-bottom:0.5px solid var(--cb)\">" +
+      '<th style="padding:8px 14px;text-align:left;background:var(--cbs);color:var(--cts);font-weight:500">Capability</th>' +
+      ["Essentials", "Advanced", "Strategic"]
+        .map(function (t, i) {
+          var c = CMM[i + 2];
+          return (
+            '<th style="padding:8px 12px;text-align:center;background:var(--cbs)">' +
+            '<span style="font-size:9px;padding:2px 7px;border-radius:3px;font-weight:600;background:' +
+            c.bg +
+            ";color:" +
+            c.color +
+            '">' +
+            t +
+            "</span></th>"
+          );
+        })
+        .join("") +
+      "</tr></thead><tbody>" +
+      buildFeatureTable() +
+      "</tbody></table></div></div>";
+
+    var tab2 =
+      '<div style="background:var(--cbs);border-radius:8px;padding:12px 16px;margin-bottom:16px">' +
+      '<p style="font-size:12px;color:var(--cts);margin:0;line-height:1.6">Six evidence-backed win themes, each grounded in GovSpend data or Gong call transcripts.</p></div>' +
+      '<div style="display:flex;flex-direction:column;gap:10px">' +
+      buildWinThemes() +
+      "</div>";
+
+    var tab3 = buildPricingArch();
+
+    var panels = [tab0, tab1, tab2, tab3]
+      .map(function (html, i) {
+        return '<div class="tab-panel" data-panel="' + i + '" ' + (i === state.tab ? "" : 'hidden=""') + ">" + html + "</div>";
+      })
+      .join("");
+
+    document.getElementById("app").innerHTML =
+      '<header style="margin-bottom:1.25rem">' +
+      '<p style="font-size:11px;color:var(--ctt);text-transform:uppercase;letter-spacing:0.5px;margin:0 0 4px">OpenGov Grants Management · Competitive Strategy · GovSpend + Gong + Market Research</p>' +
+      '<h1 style="font-size:20px;font-weight:500;margin:0 0 4px">Grants Management: Pricing, Packaging & Competitive Differentiation</h1>' +
+      '<p style="font-size:12px;color:var(--cts);margin:0">Based on 59 live GovSpend POs (last 12 months), Gong call analysis, and the CMM framework — with independent verification and recommendations.</p></header>' +
+      '<nav class="tab-nav">' +
+      nav +
+      "</nav>" +
+      '<p style="font-size:11px;color:var(--ctt);margin:0 0 12px;padding:0 4px">This page is a single HTML file — safe to host on Vercel as static (<strong>Upload</strong> or drop into a repo as <code>index.html</code>).</p>' +
+      panels;
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    render();
+    document.getElementById("app").addEventListener("click", function (e) {
+      var tabBtn = e.target.closest("[data-tab-index]");
+      if (tabBtn) {
+        state.tab = +tabBtn.getAttribute("data-tab-index");
+        state.selectedComp = null;
+        render();
+        return;
+      }
+      var comp = e.target.closest("[data-comp-name]");
+      if (comp && comp.classList.contains("comp-card")) {
+        var name = comp.getAttribute("data-comp-name");
+        state.selectedComp = state.selectedComp === name ? null : name;
+        render();
+      }
+    });
+  });
+})();
+
+  </script>
+</body>
+</html>
